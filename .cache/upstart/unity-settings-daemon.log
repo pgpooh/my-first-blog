@@ -1,0 +1,125 @@
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/entry.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/entry-disabled.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/button.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/button-default.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+Gtk-Message: GtkDialog mapped without a transient parent. This is discouraged.
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/backdrop-button.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/backdrop-check-unselected.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkCheckButton': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GsdLdsmDialog': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/backdrop-check-unselected-hover.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkCheckButton': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GsdLdsmDialog': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkCheckButton': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GsdLdsmDialog': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkCheckButton': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GsdLdsmDialog': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/check-unselected.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkCheckButton': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GsdLdsmDialog': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/check-unselected-hover.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkCheckButton': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GsdLdsmDialog': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkCheckButton': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GsdLdsmDialog': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/check-selected-hover.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkCheckButton': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GsdLdsmDialog': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: Error loading image 'file:///usr/share/themes/Ambiance/gtk-3.0/assets/check-selected.png': Unable to load image-loading module: /usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders/libpixbufloader-png.so: /lib/x86_64-linux-gnu/libz.so.1: version `ZLIB_1.2.9' not found (required by /usr/lib/x86_64-linux-gnu/libpng16.so.16)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkCheckButton': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GtkBox': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): Gtk-WARNING **: drawing failure for widget 'GsdLdsmDialog': invalid matrix (not invertible)
+
+(unity-settings-daemon:1938): GLib-GObject-WARNING **: g_object_notify: object class 'UpClient' has no property named 'g-name-owner'
+
+(unity-settings-daemon:1938): GLib-GObject-WARNING **: g_object_notify: object class 'UpDevice' has no property named 'g-name-owner'
+
+(unity-settings-daemon:1938): GLib-GObject-WARNING **: g_object_notify: object class 'UpDevice' has no property named 'g-name-owner'
+
+(unity-settings-daemon:1938): GLib-GObject-WARNING **: g_object_notify: object class 'UpClient' has no property named 'g-name-owner'
+
+(unity-settings-daemon:1938): GLib-GObject-WARNING **: g_object_notify: object class 'UpDevice' has no property named 'g-name-owner'
+
+(unity-settings-daemon:1938): GLib-GObject-WARNING **: g_object_notify: object class 'UpDevice' has no property named 'g-name-owner'

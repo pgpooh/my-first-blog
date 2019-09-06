@@ -1,0 +1,607 @@
+// Flash Player Version Detection - Rev 1.6
+// Detect Client Browser type
+// Copyright(c) 2005-2006 Adobe Macromedia Software, LLC. All rights reserved.
+var isIE  = (navigator.appVersion.indexOf("MSIE") != -1) ? true : false;
+var isWin = (navigator.appVersion.toLowerCase().indexOf("win") != -1) ? true : false;
+var isOpera = (navigator.userAgent.indexOf("Opera") != -1) ? true : false;
+
+function ControlVersion()
+{
+	var version;
+	var axo;
+	var e;
+
+	// NOTE : new ActiveXObject(strFoo) throws an exception if strFoo isn't in the registry
+
+	try {
+		// version will be set for 7.X or greater players
+		axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.7");
+		version = axo.GetVariable("$version");
+	} catch (e) {
+	}
+
+	if (!version)
+	{
+		try {
+			// version will be set for 6.X players only
+			axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.6");
+			
+			// installed player is some revision of 6.0
+			// GetVariable("$version") crashes for versions 6.0.22 through 6.0.29,
+			// so we have to be careful. 
+			
+			// default to the first public version
+			version = "WIN 6,0,21,0";
+
+			// throws if AllowScripAccess does not exist (introduced in 6.0r47)		
+			axo.AllowScriptAccess = "always";
+
+			// safe to call for 6.0r47 or greater
+			version = axo.GetVariable("$version");
+
+		} catch (e) {
+		}
+	}
+
+	if (!version)
+	{
+		try {
+			// version will be set for 4.X or 5.X player
+			axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.3");
+			version = axo.GetVariable("$version");
+		} catch (e) {
+		}
+	}
+
+	if (!version)
+	{
+		try {
+			// version will be set for 3.X player
+			axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash.3");
+			version = "WIN 3,0,18,0";
+		} catch (e) {
+		}
+	}
+
+	if (!version)
+	{
+		try {
+			// version will be set for 2.X player
+			axo = new ActiveXObject("ShockwaveFlash.ShockwaveFlash");
+			version = "WIN 2,0,0,11";
+		} catch (e) {
+			version = -1;
+		}
+	}
+	
+	return version;
+}
+
+// JavaScript helper required to detect Flash Player PlugIn version information
+function GetSwfVer(){
+	// NS/Opera version >= 3 check for Flash plugin in plugin array
+	var flashVer = -1;
+	
+	if (navigator.plugins != null && navigator.plugins.length > 0) {
+		if (navigator.plugins["Shockwave Flash 2.0"] || navigator.plugins["Shockwave Flash"]) {
+			var swVer2 = navigator.plugins["Shockwave Flash 2.0"] ? " 2.0" : "";
+			var flashDescription = navigator.plugins["Shockwave Flash" + swVer2].description;
+			var descArray = flashDescription.split(" ");
+			var tempArrayMajor = descArray[2].split(".");			
+			var versionMajor = tempArrayMajor[0];
+			var versionMinor = tempArrayMajor[1];
+			var versionRevision = descArray[3];
+			if (versionRevision == "") {
+				versionRevision = descArray[4];
+			}
+			if (versionRevision[0] == "d") {
+				versionRevision = versionRevision.substring(1);
+			} else if (versionRevision[0] == "r") {
+				versionRevision = versionRevision.substring(1);
+				if (versionRevision.indexOf("d") > 0) {
+					versionRevision = versionRevision.substring(0, versionRevision.indexOf("d"));
+				}
+			}
+			var flashVer = versionMajor + "." + versionMinor + "." + versionRevision;
+//			alert("flashVer="+flashVer);
+		}
+	}
+	// MSN/WebTV 2.6 supports Flash 4
+	else if (navigator.userAgent.toLowerCase().indexOf("webtv/2.6") != -1) flashVer = 4;
+	// WebTV 2.5 supports Flash 3
+	else if (navigator.userAgent.toLowerCase().indexOf("webtv/2.5") != -1) flashVer = 3;
+	// older WebTV supports Flash 2
+	else if (navigator.userAgent.toLowerCase().indexOf("webtv") != -1) flashVer = 2;
+	else if ( isIE && isWin && !isOpera ) {
+		flashVer = ControlVersion();
+	}	
+	return flashVer;
+}
+
+// When called with reqMajorVer, reqMinorVer, reqRevision returns true if that version or greater is available
+function DetectFlashVer(reqMajorVer, reqMinorVer, reqRevision)
+{
+	versionStr = GetSwfVer();
+	if (versionStr == -1 ) {
+		return false;
+	} else if (versionStr != 0) {
+		if(isIE && isWin && !isOpera) {
+			// Given "WIN 2,0,0,11"
+			tempArray         = versionStr.split(" "); 	// ["WIN", "2,0,0,11"]
+			tempString        = tempArray[1];			// "2,0,0,11"
+			versionArray      = tempString.split(",");	// ['2', '0', '0', '11']
+		} else {
+			versionArray      = versionStr.split(".");
+		}
+		var versionMajor      = versionArray[0];
+		var versionMinor      = versionArray[1];
+		var versionRevision   = versionArray[2];
+
+        	// is the major.revision >= requested major.revision AND the minor version >= requested minor
+		if (versionMajor > parseFloat(reqMajorVer)) {
+			return true;
+		} else if (versionMajor == parseFloat(reqMajorVer)) {
+			if (versionMinor > parseFloat(reqMinorVer))
+				return true;
+			else if (versionMinor == parseFloat(reqMinorVer)) {
+				if (versionRevision >= parseFloat(reqRevision))
+					return true;
+			}
+		}
+		return false;
+	}
+}
+
+function AC_AddExtension(src, ext)
+{
+  if (src.indexOf('?') != -1)
+    return src.replace(/\?/, ext+'?'); 
+  else
+    return src + ext;
+}
+
+function AC_Generateobj(objAttrs, params, embedAttrs) 
+{ 
+    var str = '';
+    if (isIE && isWin && !isOpera)
+    {
+  		str += '<object ';
+  		for (var i in objAttrs)
+  			str += i + '="' + objAttrs[i] + '" ';
+  		for (var i in params)
+  			str += '><param name="' + i + '" value="' + params[i] + '" /> ';
+  		str += '></object>';
+    } else {
+  		str += '<embed ';
+  		for (var i in embedAttrs)
+  			str += i + '="' + embedAttrs[i] + '" ';
+  		str += '> </embed>';
+    }
+
+    document.write(str);
+}
+
+function AC_FL_RunContent(){
+  var ret = 
+    AC_GetArgs
+    (  arguments, ".swf", "movie", "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+     , "application/x-shockwave-flash"
+    );
+  AC_Generateobj(ret.objAttrs, ret.params, ret.embedAttrs);
+}
+
+function AC_GetArgs(args, ext, srcParamName, classid, mimeType){
+  var ret = new Object();
+  ret.embedAttrs = new Object();
+  ret.params = new Object();
+  ret.objAttrs = new Object();
+  for (var i=0; i < args.length; i=i+2){
+    var currArg = args[i].toLowerCase();    
+
+    switch (currArg){	
+      case "classid":
+        break;
+      case "pluginspage":
+        ret.embedAttrs[args[i]] = args[i+1];
+        break;
+      case "src":
+      case "movie":	
+        args[i+1] = AC_AddExtension(args[i+1], ext);
+        ret.embedAttrs["src"] = args[i+1];
+        ret.params[srcParamName] = args[i+1];
+        break;
+      case "onafterupdate":
+      case "onbeforeupdate":
+      case "onblur":
+      case "oncellchange":
+      case "onclick":
+      case "ondblClick":
+      case "ondrag":
+      case "ondragend":
+      case "ondragenter":
+      case "ondragleave":
+      case "ondragover":
+      case "ondrop":
+      case "onfinish":
+      case "onfocus":
+      case "onhelp":
+      case "onmousedown":
+      case "onmouseup":
+      case "onmouseover":
+      case "onmousemove":
+      case "onmouseout":
+      case "onkeypress":
+      case "onkeydown":
+      case "onkeyup":
+      case "onload":
+      case "onlosecapture":
+      case "onpropertychange":
+      case "onreadystatechange":
+      case "onrowsdelete":
+      case "onrowenter":
+      case "onrowexit":
+      case "onrowsinserted":
+      case "onstart":
+      case "onscroll":
+      case "onbeforeeditfocus":
+      case "onactivate":
+      case "onbeforedeactivate":
+      case "ondeactivate":
+      case "type":
+      case "codebase":
+        ret.objAttrs[args[i]] = args[i+1];
+        break;
+      case "id":
+      case "width":
+      case "height":
+      case "align":
+      case "vspace": 
+      case "hspace":
+      case "class":
+      case "title":
+      case "accesskey":
+      case "name":
+      case "tabindex":
+        ret.embedAttrs[args[i]] = ret.objAttrs[args[i]] = args[i+1];
+        break;
+      default:
+        ret.embedAttrs[args[i]] = ret.params[args[i]] = args[i+1];
+    }
+  }
+  ret.objAttrs["classid"] = classid;
+  if (mimeType) ret.embedAttrs["type"] = mimeType;
+  return ret;
+}
+
+
+        20190828152820       9                             / /   F l a s h   P l a y e r   V e r s i o n   D e t e c t i o n   -   R e v   1 . 6  
+ / /   D e t e c t   C l i e n t   B r o w s e r   t y p e  
+ / /   C o p y r i g h t ( c )   2 0 0 5 - 2 0 0 6   A d o b e   M a c r o m e d i a   S o f t w a r e ,   L L C .   A l l   r i g h t s   r e s e r v e d .  
+ v a r   i s I E     =   ( n a v i g a t o r . a p p V e r s i o n . i n d e x O f ( " M S I E " )   ! =   - 1 )   ?   t r u e   :   f a l s e ;  
+ v a r   i s W i n   =   ( n a v i g a t o r . a p p V e r s i o n . t o L o w e r C a s e ( ) . i n d e x O f ( " w i n " )   ! =   - 1 )   ?   t r u e   :   f a l s e ;  
+ v a r   i s O p e r a   =   ( n a v i g a t o r . u s e r A g e n t . i n d e x O f ( " O p e r a " )   ! =   - 1 )   ?   t r u e   :   f a l s e ;  
+  
+ f u n c t i o n   C o n t r o l V e r s i o n ( )  
+ {  
+ 	 v a r   v e r s i o n ;  
+ 	 v a r   a x o ;  
+ 	 v a r   e ;  
+  
+ 	 / /   N O T E   :   n e w   A c t i v e X O b j e c t ( s t r F o o )   t h r o w s   a n   e x c e p t i o n   i f   s t r F o o   i s n ' t   i n   t h e   r e g i s t r y  
+  
+ 	 t r y   {  
+ 	 	 / /   v e r s i o n   w i l l   b e   s e t   f o r   7 . X   o r   g r e a t e r   p l a y e r s  
+ 	 	 a x o   =   n e w   A c t i v e X O b j e c t ( " S h o c k w a v e F l a s h . S h o c k w a v e F l a s h . 7 " ) ;  
+ 	 	 v e r s i o n   =   a x o . G e t V a r i a b l e ( " $ v e r s i o n " ) ;  
+ 	 }   c a t c h   ( e )   {  
+ 	 }  
+  
+ 	 i f   ( ! v e r s i o n )  
+ 	 {  
+ 	 	 t r y   {  
+ 	 	 	 / /   v e r s i o n   w i l l   b e   s e t   f o r   6 . X   p l a y e r s   o n l y  
+ 	 	 	 a x o   =   n e w   A c t i v e X O b j e c t ( " S h o c k w a v e F l a s h . S h o c k w a v e F l a s h . 6 " ) ;  
+ 	 	 	  
+ 	 	 	 / /   i n s t a l l e d   p l a y e r   i s   s o m e   r e v i s i o n   o f   6 . 0  
+ 	 	 	 / /   G e t V a r i a b l e ( " $ v e r s i o n " )   c r a s h e s   f o r   v e r s i o n s   6 . 0 . 2 2   t h r o u g h   6 . 0 . 2 9 ,  
+ 	 	 	 / /   s o   w e   h a v e   t o   b e   c a r e f u l .    
+ 	 	 	  
+ 	 	 	 / /   d e f a u l t   t o   t h e   f i r s t   p u b l i c   v e r s i o n  
+ 	 	 	 v e r s i o n   =   " W I N   6 , 0 , 2 1 , 0 " ;  
+  
+ 	 	 	 / /   t h r o w s   i f   A l l o w S c r i p A c c e s s   d o e s   n o t   e x i s t   ( i n t r o d u c e d   i n   6 . 0 r 4 7 ) 	 	  
+ 	 	 	 a x o . A l l o w S c r i p t A c c e s s   =   " a l w a y s " ;  
+  
+ 	 	 	 / /   s a f e   t o   c a l l   f o r   6 . 0 r 4 7   o r   g r e a t e r  
+ 	 	 	 v e r s i o n   =   a x o . G e t V a r i a b l e ( " $ v e r s i o n " ) ;  
+  
+ 	 	 }   c a t c h   ( e )   {  
+ 	 	 }  
+ 	 }  
+  
+ 	 i f   ( ! v e r s i o n )  
+ 	 {  
+ 	 	 t r y   {  
+ 	 	 	 / /   v e r s i o n   w i l l   b e   s e t   f o r   4 . X   o r   5 . X   p l a y e r  
+ 	 	 	 a x o   =   n e w   A c t i v e X O b j e c t ( " S h o c k w a v e F l a s h . S h o c k w a v e F l a s h . 3 " ) ;  
+ 	 	 	 v e r s i o n   =   a x o . G e t V a r i a b l e ( " $ v e r s i o n " ) ;  
+ 	 	 }   c a t c h   ( e )   {  
+ 	 	 }  
+ 	 }  
+  
+ 	 i f   ( ! v e r s i o n )  
+ 	 {  
+ 	 	 t r y   {  
+ 	 	 	 / /   v e r s i o n   w i l l   b e   s e t   f o r   3 . X   p l a y e r  
+ 	 	 	 a x o   =   n e w   A c t i v e X O b j e c t ( " S h o c k w a v e F l a s h . S h o c k w a v e F l a s h . 3 " ) ;  
+ 	 	 	 v e r s i o n   =   " W I N   3 , 0 , 1 8 , 0 " ;  
+ 	 	 }   c a t c h   ( e )   {  
+ 	 	 }  
+ 	 }  
+  
+ 	 i f   ( ! v e r s i o n )  
+ 	 {  
+ 	 	 t r y   {  
+ 	 	 	 / /   v e r s i o n   w i l l   b e   s e t   f o r   2 . X   p l a y e r  
+ 	 	 	 a x o   =   n e w   A c t i v e X O b j e c t ( " S h o c k w a v e F l a s h . S h o c k w a v e F l a s h " ) ;  
+ 	 	 	 v e r s i o n   =   " W I N   2 , 0 , 0 , 1 1 " ;  
+ 	 	 }   c a t c h   ( e )   {  
+ 	 	 	 v e r s i o n   =   - 1 ;  
+ 	 	 }  
+ 	 }  
+ 	  
+ 	 r e t u r n   v e r s i o n ;  
+ }  
+  
+ / /   J a v a S c r i p t   h e l p e r   r e q u i r e d   t o   d e t e c t   F l a s h   P l a y e r   P l u g I n   v e r s i o n   i n f o r m a t i o n  
+ f u n c t i o n   G e t S w f V e r ( ) {  
+ 	 / /   N S / O p e r a   v e r s i o n   > =   3   c h e c k   f o r   F l a s h   p l u g i n   i n   p l u g i n   a r r a y  
+ 	 v a r   f l a s h V e r   =   - 1 ;  
+ 	  
+ 	 i f   ( n a v i g a t o r . p l u g i n s   ! =   n u l l   & &   n a v i g a t o r . p l u g i n s . l e n g t h   >   0 )   {  
+ 	 	 i f   ( n a v i g a t o r . p l u g i n s [ " S h o c k w a v e   F l a s h   2 . 0 " ]   | |   n a v i g a t o r . p l u g i n s [ " S h o c k w a v e   F l a s h " ] )   {  
+ 	 	 	 v a r   s w V e r 2   =   n a v i g a t o r . p l u g i n s [ " S h o c k w a v e   F l a s h   2 . 0 " ]   ?   "   2 . 0 "   :   " " ;  
+ 	 	 	 v a r   f l a s h D e s c r i p t i o n   =   n a v i g a t o r . p l u g i n s [ " S h o c k w a v e   F l a s h "   +   s w V e r 2 ] . d e s c r i p t i o n ;  
+ 	 	 	 v a r   d e s c A r r a y   =   f l a s h D e s c r i p t i o n . s p l i t ( "   " ) ;  
+ 	 	 	 v a r   t e m p A r r a y M a j o r   =   d e s c A r r a y [ 2 ] . s p l i t ( " . " ) ; 	 	 	  
+ 	 	 	 v a r   v e r s i o n M a j o r   =   t e m p A r r a y M a j o r [ 0 ] ;  
+ 	 	 	 v a r   v e r s i o n M i n o r   =   t e m p A r r a y M a j o r [ 1 ] ;  
+ 	 	 	 v a r   v e r s i o n R e v i s i o n   =   d e s c A r r a y [ 3 ] ;  
+ 	 	 	 i f   ( v e r s i o n R e v i s i o n   = =   " " )   {  
+ 	 	 	 	 v e r s i o n R e v i s i o n   =   d e s c A r r a y [ 4 ] ;  
+ 	 	 	 }  
+ 	 	 	 i f   ( v e r s i o n R e v i s i o n [ 0 ]   = =   " d " )   {  
+ 	 	 	 	 v e r s i o n R e v i s i o n   =   v e r s i o n R e v i s i o n . s u b s t r i n g ( 1 ) ;  
+ 	 	 	 }   e l s e   i f   ( v e r s i o n R e v i s i o n [ 0 ]   = =   " r " )   {  
+ 	 	 	 	 v e r s i o n R e v i s i o n   =   v e r s i o n R e v i s i o n . s u b s t r i n g ( 1 ) ;  
+ 	 	 	 	 i f   ( v e r s i o n R e v i s i o n . i n d e x O f ( " d " )   >   0 )   {  
+ 	 	 	 	 	 v e r s i o n R e v i s i o n   =   v e r s i o n R e v i s i o n . s u b s t r i n g ( 0 ,   v e r s i o n R e v i s i o n . i n d e x O f ( " d " ) ) ;  
+ 	 	 	 	 }  
+ 	 	 	 }  
+ 	 	 	 v a r   f l a s h V e r   =   v e r s i o n M a j o r   +   " . "   +   v e r s i o n M i n o r   +   " . "   +   v e r s i o n R e v i s i o n ;  
+ / / 	 	 	 a l e r t ( " f l a s h V e r = " + f l a s h V e r ) ;  
+ 	 	 }  
+ 	 }  
+ 	 / /   M S N / W e b T V   2 . 6   s u p p o r t s   F l a s h   4  
+ 	 e l s e   i f   ( n a v i g a t o r . u s e r A g e n t . t o L o w e r C a s e ( ) . i n d e x O f ( " w e b t v / 2 . 6 " )   ! =   - 1 )   f l a s h V e r   =   4 ;  
+ 	 / /   W e b T V   2 . 5   s u p p o r t s   F l a s h   3  
+ 	 e l s e   i f   ( n a v i g a t o r . u s e r A g e n t . t o L o w e r C a s e ( ) . i n d e x O f ( " w e b t v / 2 . 5 " )   ! =   - 1 )   f l a s h V e r   =   3 ;  
+ 	 / /   o l d e r   W e b T V   s u p p o r t s   F l a s h   2  
+ 	 e l s e   i f   ( n a v i g a t o r . u s e r A g e n t . t o L o w e r C a s e ( ) . i n d e x O f ( " w e b t v " )   ! =   - 1 )   f l a s h V e r   =   2 ;  
+ 	 e l s e   i f   (   i s I E   & &   i s W i n   & &   ! i s O p e r a   )   {  
+ 	 	 f l a s h V e r   =   C o n t r o l V e r s i o n ( ) ;  
+ 	 } 	  
+ 	 r e t u r n   f l a s h V e r ;  
+ }  
+  
+ / /   W h e n   c a l l e d   w i t h   r e q M a j o r V e r ,   r e q M i n o r V e r ,   r e q R e v i s i o n   r e t u r n s   t r u e   i f   t h a t   v e r s i o n   o r   g r e a t e r   i s   a v a i l a b l e  
+ f u n c t i o n   D e t e c t F l a s h V e r ( r e q M a j o r V e r ,   r e q M i n o r V e r ,   r e q R e v i s i o n )  
+ {  
+ 	 v e r s i o n S t r   =   G e t S w f V e r ( ) ;  
+ 	 i f   ( v e r s i o n S t r   = =   - 1   )   {  
+ 	 	 r e t u r n   f a l s e ;  
+ 	 }   e l s e   i f   ( v e r s i o n S t r   ! =   0 )   {  
+ 	 	 i f ( i s I E   & &   i s W i n   & &   ! i s O p e r a )   {  
+ 	 	 	 / /   G i v e n   " W I N   2 , 0 , 0 , 1 1 "  
+ 	 	 	 t e m p A r r a y                   =   v e r s i o n S t r . s p l i t ( "   " ) ;   	 / /   [ " W I N " ,   " 2 , 0 , 0 , 1 1 " ]  
+ 	 	 	 t e m p S t r i n g                 =   t e m p A r r a y [ 1 ] ; 	 	 	 / /   " 2 , 0 , 0 , 1 1 "  
+ 	 	 	 v e r s i o n A r r a y             =   t e m p S t r i n g . s p l i t ( " , " ) ; 	 / /   [ ' 2 ' ,   ' 0 ' ,   ' 0 ' ,   ' 1 1 ' ]  
+ 	 	 }   e l s e   {  
+ 	 	 	 v e r s i o n A r r a y             =   v e r s i o n S t r . s p l i t ( " . " ) ;  
+ 	 	 }  
+ 	 	 v a r   v e r s i o n M a j o r             =   v e r s i o n A r r a y [ 0 ] ;  
+ 	 	 v a r   v e r s i o n M i n o r             =   v e r s i o n A r r a y [ 1 ] ;  
+ 	 	 v a r   v e r s i o n R e v i s i o n       =   v e r s i o n A r r a y [ 2 ] ;  
+  
+                 	 / /   i s   t h e   m a j o r . r e v i s i o n   > =   r e q u e s t e d   m a j o r . r e v i s i o n   A N D   t h e   m i n o r   v e r s i o n   > =   r e q u e s t e d   m i n o r  
+ 	 	 i f   ( v e r s i o n M a j o r   >   p a r s e F l o a t ( r e q M a j o r V e r ) )   {  
+ 	 	 	 r e t u r n   t r u e ;  
+ 	 	 }   e l s e   i f   ( v e r s i o n M a j o r   = =   p a r s e F l o a t ( r e q M a j o r V e r ) )   {  
+ 	 	 	 i f   ( v e r s i o n M i n o r   >   p a r s e F l o a t ( r e q M i n o r V e r ) )  
+ 	 	 	 	 r e t u r n   t r u e ;  
+ 	 	 	 e l s e   i f   ( v e r s i o n M i n o r   = =   p a r s e F l o a t ( r e q M i n o r V e r ) )   {  
+ 	 	 	 	 i f   ( v e r s i o n R e v i s i o n   > =   p a r s e F l o a t ( r e q R e v i s i o n ) )  
+ 	 	 	 	 	 r e t u r n   t r u e ;  
+ 	 	 	 }  
+ 	 	 }  
+ 	 	 r e t u r n   f a l s e ;  
+ 	 }  
+ }  
+  
+ f u n c t i o n   A C _ A d d E x t e n s i o n ( s r c ,   e x t )  
+ {  
+     i f   ( s r c . i n d e x O f ( ' ? ' )   ! =   - 1 )  
+         r e t u r n   s r c . r e p l a c e ( / \ ? / ,   e x t + ' ? ' ) ;    
+     e l s e  
+         r e t u r n   s r c   +   e x t ;  
+ }  
+  
+ f u n c t i o n   A C _ G e n e r a t e o b j ( o b j A t t r s ,   p a r a m s ,   e m b e d A t t r s )    
+ {    
+         v a r   s t r   =   ' ' ;  
+         i f   ( i s I E   & &   i s W i n   & &   ! i s O p e r a )  
+         {  
+     	 	 s t r   + =   ' < o b j e c t   ' ;  
+     	 	 f o r   ( v a r   i   i n   o b j A t t r s )  
+     	 	 	 s t r   + =   i   +   ' = " '   +   o b j A t t r s [ i ]   +   ' "   ' ;  
+     	 	 f o r   ( v a r   i   i n   p a r a m s )  
+     	 	 	 s t r   + =   ' > < p a r a m   n a m e = " '   +   i   +   ' "   v a l u e = " '   +   p a r a m s [ i ]   +   ' "   / >   ' ;  
+     	 	 s t r   + =   ' > < / o b j e c t > ' ;  
+         }   e l s e   {  
+     	 	 s t r   + =   ' < e m b e d   ' ;  
+     	 	 f o r   ( v a r   i   i n   e m b e d A t t r s )  
+     	 	 	 s t r   + =   i   +   ' = " '   +   e m b e d A t t r s [ i ]   +   ' "   ' ;  
+     	 	 s t r   + =   ' >   < / e m b e d > ' ;  
+         }  
+  
+         d o c u m e n t . w r i t e ( s t r ) ;  
+ }  
+  
+ f u n c t i o n   A C _ F L _ R u n C o n t e n t ( ) {  
+     v a r   r e t   =    
+         A C _ G e t A r g s  
+         (     a r g u m e n t s ,   " . s w f " ,   " m o v i e " ,   " c l s i d : d 2 7 c d b 6 e - a e 6 d - 1 1 c f - 9 6 b 8 - 4 4 4 5 5 3 5 4 0 0 0 0 "  
+           ,   " a p p l i c a t i o n / x - s h o c k w a v e - f l a s h "  
+         ) ;  
+     A C _ G e n e r a t e o b j ( r e t . o b j A t t r s ,   r e t . p a r a m s ,   r e t . e m b e d A t t r s ) ;  
+ }  
+  
+ f u n c t i o n   A C _ G e t A r g s ( a r g s ,   e x t ,   s r c P a r a m N a m e ,   c l a s s i d ,   m i m e T y p e ) {  
+     v a r   r e t   =   n e w   O b j e c t ( ) ;  
+     r e t . e m b e d A t t r s   =   n e w   O b j e c t ( ) ;  
+     r e t . p a r a m s   =   n e w   O b j e c t ( ) ;  
+     r e t . o b j A t t r s   =   n e w   O b j e c t ( ) ;  
+     f o r   ( v a r   i = 0 ;   i   <   a r g s . l e n g t h ;   i = i + 2 ) {  
+         v a r   c u r r A r g   =   a r g s [ i ] . t o L o w e r C a s e ( ) ;          
+  
+         s w i t c h   ( c u r r A r g ) { 	  
+             c a s e   " c l a s s i d " :  
+                 b r e a k ;  
+             c a s e   " p l u g i n s p a g e " :  
+                 r e t . e m b e d A t t r s [ a r g s [ i ] ]   =   a r g s [ i + 1 ] ;  
+                 b r e a k ;  
+             c a s e   " s r c " :  
+             c a s e   " m o v i e " : 	  
+                 a r g s [ i + 1 ]   =   A C _ A d d E x t e n s i o n ( a r g s [ i + 1 ] ,   e x t ) ;  
+                 r e t . e m b e d A t t r s [ " s r c " ]   =   a r g s [ i + 1 ] ;  
+                 r e t . p a r a m s [ s r c P a r a m N a m e ]   =   a r g s [ i + 1 ] ;  
+                 b r e a k ;  
+             c a s e   " o n a f t e r u p d a t e " :  
+             c a s e   " o n b e f o r e u p d a t e " :  
+             c a s e   " o n b l u r " :  
+             c a s e   " o n c e l l c h a n g e " :  
+             c a s e   " o n c l i c k " :  
+             c a s e   " o n d b l C l i c k " :  
+             c a s e   " o n d r a g " :  
+             c a s e   " o n d r a g e n d " :  
+             c a s e   " o n d r a g e n t e r " :  
+             c a s e   " o n d r a g l e a v e " :  
+             c a s e   " o n d r a g o v e r " :  
+             c a s e   " o n d r o p " :  
+             c a s e   " o n f i n i s h " :  
+             c a s e   " o n f o c u s " :  
+             c a s e   " o n h e l p " :  
+             c a s e   " o n m o u s e d o w n " :  
+             c a s e   " o n m o u s e u p " :  
+             c a s e   " o n m o u s e o v e r " :  
+             c a s e   " o n m o u s e m o v e " :  
+             c a s e   " o n m o u s e o u t " :  
+             c a s e   " o n k e y p r e s s " :  
+             c a s e   " o n k e y d o w n " :  
+             c a s e   " o n k e y u p " :  
+             c a s e   " o n l o a d " :  
+             c a s e   " o n l o s e c a p t u r e " :  
+             c a s e   " o n p r o p e r t y c h a n g e " :  
+             c a s e   " o n r e a d y s t a t e c h a n g e " :  
+             c a s e   " o n r o w s d e l e t e " :  
+             c a s e   " o n r o w e n t e r " :  
+             c a s e   " o n r o w e x i t " :  
+             c a s e   " o n r o w s i n s e r t e d " :  
+             c a s e   " o n s t a r t " :  
+             c a s e   " o n s c r o l l " :  
+             c a s e   " o n b e f o r e e d i t f o c u s " :  
+             c a s e   " o n a c t i v a t e " :  
+             c a s e   " o n b e f o r e d e a c t i v a t e " :  
+             c a s e   " o n d e a c t i v a t e " :  
+             c a s e   " t y p e " :  
+             c a s e   " c o d e b a s e " :  
+                 r e t . o b j A t t r s [ a r g s [ i ] ]   =   a r g s [ i + 1 ] ;  
+                 b r e a k ;  
+             c a s e   " i d " :  
+             c a s e   " w i d t h " :  
+             c a s e   " h e i g h t " :  
+             c a s e   " a l i g n " :  
+             c a s e   " v s p a c e " :    
+             c a s e   " h s p a c e " :  
+             c a s e   " c l a s s " :  
+             c a s e   " t i t l e " :  
+             c a s e   " a c c e s s k e y " :  
+             c a s e   " n a m e " :  
+             c a s e   " t a b i n d e x " :  
+                 r e t . e m b e d A t t r s [ a r g s [ i ] ]   =   r e t . o b j A t t r s [ a r g s [ i ] ]   =   a r g s [ i + 1 ] ;  
+                 b r e a k ;  
+             d e f a u l t :  
+                 r e t . e m b e d A t t r s [ a r g s [ i ] ]   =   r e t . p a r a m s [ a r g s [ i ] ]   =   a r g s [ i + 1 ] ;  
+         }  
+     }  
+     r e t . o b j A t t r s [ " c l a s s i d " ]   =   c l a s s i d ;  
+     i f   ( m i m e T y p e )   r e t . e m b e d A t t r s [ " t y p e " ]   =   m i m e T y p e ;  
+     r e t u r n   r e t ;  
+ }  
+  
+  
+   5       https://login.oracle.com/oaam_server/js/AC_OETags.js    !«!‡!«!ÿÿÿÿ
+   	   isIE   isWin   isOpera   ControlVersion   GetSwfVer   DetectFlashVer   AC_AddExtension   AC_Generateobj!   AC_FL_RunContent   AC_GetArgs
+   
+   !«!!«!          ControlVersion  Ά  Ε  ‹  Ε            ÿÿÿÿ       Κ5!«!!«!          GetSwfVer   Q                    ,  ƒ    ƒ        !«!!«!ÿÿÿÿ      flashVer   swVer2!   flashDescription   descArray   tempArrayMajor   versionMajor   versionMinor   versionRevision          ;ψ   2  ύ                             ]     > ΧÿW   Q    5   @E   ζ   Q    5   Ω   >ζ	   δ  ζ
+       5   5   D   ζ   Q    5   5   ζ   Ά  ζ       5   5      ζ   =      ζ   =   ζ   W  Q    5   =   V  75   W  QV  Έ   
+=	   : W  QV  Χ7Έ   
+=
+   : W  QV  >7W  QV  ?7W  QV  Χ7W  QV  =      ζ%   V  Χ7W  Qζ&   V  >7=   #   ζ)   V  Έ   
+?: W  Qz   ζ+   V  >7=   d   ζ.   V  Έ   
+?: W  QV  Έ   
+=   : >1   ζ4   V  Έ   
+>V  Έ   
+=   : : W  Qζ8   V  =
+   V  =
+   V  W   Qζ<     ζ<       5   Έ   
+:  Έ   
+=   : Χÿ   ζD   ΧW   QΣ   ζD       5   Έ   
+:  Έ   
+=   : Χÿ   ζL   ΧW   Q’   ζL       5   Έ   
+:  Έ   
+=   : Χÿ   ζT   ΧW   QQ   ζT      E!   ζV   Q   E   ζX   Q    ζZ      ζ[         :  W   Qζ]   V   ™¨SΈ°―UΈ°νΚ Έ°ξΚ Έ°Οθ Έ°ί Έ°Π°Θ Έ°Σ°Θ Έ°Λ Έ°Λ Έ°Μ Έ°ΚΚ Έ°Ρ¨aΈ°ΜΚ Έ°Μ"°Ò Έ°ΜΚ Έ°Μ"°Θ Έ°Π°Κ Έ°ά?°›ÿÿÿγ°Ν¨iΈ°ξ¨n
+Έ°Ρ°Ο°ΚΈ°Ρ¨p
+Έ°Ρ°Ο°ΚΈ°Ρ¨r
+Έ°Ρ°Ο°ΚΈ°Ρ Έ°ΰΛΚ Έ°Κ°Ν¨vΈ°¤±    navigator   plugins   length'   Shockwave Flash 2.0   Shockwave Flash	    2.0      description   split       .   d   substring   r   indexOf   userAgent   toLowerCase   webtv/2.6   webtv/2.5   webtv	   isIE   isWin   isOpera   ControlVersion    ÿÿÿÿ   Κ5!«!!«!          DetectFlashVer  z                      2  χ  2        !«!!«!ÿÿÿÿ      reqMajorVer   reqMinorVer   reqRevision   versionMajor   versionMinor   versionRevision        ;ψ   α  Ϊ                             B    " Φ          :  ›    Q    Χÿ   ζ   B―  ζ       >  ζ      E!   ζ   Q   E   ζ   Q    ζ   _   ζ   Φ       Έ   
+=   : ›   QΦ      ?7›   QΦ	      Έ   
+=
+   : ›	   Q)   ζ#   Φ	       Έ   
+=   : ›	   Qζ(   	   >7W   Q	   ?7W  Q	   Χ7W  QV         T  :    ζ2   C”   ζ2   V         T  : u   ζ6   V        T :    ζ:   CJ   ζ:   V        T : +   ζ>   V        T :    ζB   CζB   BζB   ™  Έ°Ο°Ι Έ°ΘΚ Έ°©€  ™Λ¨Έ°Κ Έ°ΰΛΚ  Έ°Φ°Ι Έ°Ò Έ°Φ°Σ  Έ°Φ°Ξ  Έ°Μ Έ°Μ Έ°Ν   Έ°Ρ°Κ Έ°©€  ™Λ¨€  Έ°Ρ°Κ Έ°Ρ°Κ Έ°©€  ™Λ¨€  ’Έ°Ρ°Κ Έ°Ρ°Κ Έ°©€  ™®€  —Έ°΅ ¶      versionStr   GetSwfVer	   isIE   isWin   isOpera   tempArray   split       tempString   versionArray   ,   .   parseFloat    ÿÿÿÿ   Κ5!«!!«!          AC_AddExtension N  Ε  6  Ε  ›          ÿÿÿÿ       Κ5!«!!«!          AC_Generateobj ΰ  Π  Ι  Π  £          ÿÿÿÿ       Κ5!«!!«!       !   AC_FL_RunContent  ν  Ο  Τ  Ο  Έ         ÿÿÿÿ       Κ5!«!!«!          AC_GetArgs ζ  ’  Σ  ’  Α          ÿÿÿÿ       Κ5;ψ   
+  1               9                              ‚   ‚   ‚   ‚   ‚   ‚   ‚   Φ       5   Έ   
+=   : Χÿ   ζ   C   ζ   Bζ   ›    QΦ      5   Έ   
+:  Έ   
+=   : Χÿ   ζ   C   ζ   Bζ   ›   QΦ      5	   Έ   
+=
+   : Χÿ   ζ   C   ζ   Bζ   ›   Q™ω¨Έ°Φ°α Έ°Ρ°Ο°α Έ°Φ°α¨€ °    	   isIE   isWin   isOpera   navigator   appVersion   indexOf	   MSIE   toLowerCase   win   userAgent   OperaουτιW:      ]q ]q @Η5V]zSζ   5    :https://login.oracle.com/oaam_server/js/AC_OETags.js necko:classified 1 strongly-framed 1 security-info FnhllAKWRHGAlo+ESXykKAAAAAAAAAAAwAAAAAAAAEaphjojH6pBabDSgSnsfLHeAAAAAgAAAAAAAAAAAAAAAAAAAAEAMQFmCjImkVxP+7sgiYWmMt8FvcOXmlQiTNWFiWlrbpbqgwAAAAAAAAamMIIGojCCBYqgAwIBAgIQDvnV8WGhIR62Y4u9nnGnCzANBgkqhkiG9w0BAQsFADBNMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMScwJQYDVQQDEx5EaWdpQ2VydCBTSEEyIFNlY3VyZSBTZXJ2ZXIgQ0EwHhcNMTgwOTA2MDAwMDAwWhcNMjAwMTA1MTIwMDAwWjBxMQswCQYDVQQGEwJVUzETMBEGA1UECBMKQ2FsaWZvcm5pYTEVMBMGA1UEBxMMUmVkd29vZCBDaXR5MRswGQYDVQQKExJPcmFjbGUgQ29ycG9yYXRpb24xGTAXBgNVBAMTEGxvZ2luLm9yYWNsZS5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDbI2cpwsJt6/7zvEAYbtTdGcgwPMvALxdHS7f7/6f7p55wN9amg8FRU4+aiF7js7IVNFXkFpc3vK/fktqmpi0Ro7AV40ZMmaXUiiAkAvhFG6+ezRo5LOVwgtU+9yfmUFXNhUeaEhQx5LePlMmvEIEuJESkBw2gXBpnox4V6bcM3NjLHAWd9m/dnffSJe3Gzj88AaribfinRf/HYqnnuZzgb1w242fv/2dXJbvYrZYPUUGaAuRK3BvduZTbigMOt8c4xL11Aa+kRMBIF/j4jpdRgeLlZDMvjV2j3y4TYwF8szwEXf5U2Qkw2QDr1UgsiU25HqZSTia9O/x+SwiXJgR3AgMBAAGjggNYMIIDVDAfBgNVHSMEGDAWgBQPgGEcgjFh1S8o541GOLQs4cbZ4jAdBgNVHQ4EFgQUPlnAw2X5tN9Df1GEbTaJUQeM+VkwGwYDVR0RBBQwEoIQbG9naW4ub3JhY2xlLmNvbTAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMGsGA1UdHwRkMGIwL6AtoCuGKWh0dHA6Ly9jcmwzLmRpZ2ljZXJ0LmNvbS9zc2NhLXNoYTItZzYuY3JsMC+gLaArhilodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vc3NjYS1zaGEyLWc2LmNybDBMBgNVHSAERTBDMDcGCWCGSAGG/WwBATAqMCgGCCsGAQUFBwIBFhxodHRwczovL3d3dy5kaWdpY2VydC5jb20vQ1BTMAgGBmeBDAECAjB8BggrBgEFBQcBAQRwMG4wJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBGBggrBgEFBQcwAoY6aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0U0hBMlNlY3VyZVNlcnZlckNBLmNydDAJBgNVHRMEAjAAMIIBgAYKKwYBBAHWeQIEAgSCAXAEggFsAWoAdwCkuQmQtBhYFIe7E6LMZ3AKPDWYBPkb37jjd80OyA3cEAAAAWWvQICQAAAEAwBIMEYCIQCeVa0g3OyTzorsJSLbxkApG40kxhm0aPXb3huUglHhjgIhAPKIPsXwUNicXJ+K66YcD8icrqSXcMoovOnHECd0kb9tAHcAh3W/51l8+IxDmV+9827/Vo1HVjb/SrVgwbTq/16ggw8AAAFlr0CBcQAABAMASDBGAiEAvm08gQVwsyJe44Y3bBhV0M2zpFtebW6VBuI+2/H/PmUCIQDJ2aZZqFsbaU73gsxRfSYXqd1au58e0U7lCMQ3fad1dwB2AO5Lvbd1zmC64UJpH6vhnmajD35fsHLYgwDEe4l6qP3LAAABZa9AgNUAAAQDAEcwRQIgCcrTEmS03HpBOjukqp9KeFfnQe2Md2rf/0aNDnLOAYYCIQD21kRx9JD+ySIU73/fLBh7dch1ravJxRzrgw1iajTQjTANBgkqhkiG9w0BAQsFAAOCAQEAEji8yGeykcqPf4bD6RVQRMDoO8YnnP2eXMdS4ApRQuNyuD6HqPy+QYeFeGc7KXFH8Gdlr6L65j4f4qVHthEOmlXzcQhr5ZXYQvYHlhMtLtP4xLoToGiZ8tQ+2SgfswQEQIhvCNSSKRsxsMkJM0AB97imojh+1q7LqSBQPPL7NrDQf/P3FeSbmmcRH41vqAUK2BxCMS5Wmae+wOGythY0jltxXyNHeycnJshwjEBdbE1y6J8hnd8UkwH+c7Sxkp+/ClwN2lvCg8oTVOjv8ozS88k0UBvxKBptktpCoOsbeVQzrM/3mSU935wP03WP2zHCyFYnJp4oLhhHnBJytOhrpMAvAAMAAAAAAQEAAAAAAAAEbm9uZQAAABBSU0EtUEtDUzEtU0hBMjU2AZWfsWVlF0h/q5vYkTvlMZeudM2lzS9HP5b18Lf/9ixoAAAAA2YKMiaRXE/7uyCJhaYy3wW9w5eaVCJM1YWJaWtuluqDAAAAAAAABqYwggaiMIIFiqADAgECAhAO+dXxYaEhHrZji72ecacLMA0GCSqGSIb3DQEBCwUAME0xCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxJzAlBgNVBAMTHkRpZ2lDZXJ0IFNIQTIgU2VjdXJlIFNlcnZlciBDQTAeFw0xODA5MDYwMDAwMDBaFw0yMDAxMDUxMjAwMDBaMHExCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRUwEwYDVQQHEwxSZWR3b29kIENpdHkxGzAZBgNVBAoTEk9yYWNsZSBDb3Jwb3JhdGlvbjEZMBcGA1UEAxMQbG9naW4ub3JhY2xlLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANsjZynCwm3r/vO8QBhu1N0ZyDA8y8AvF0dLt/v/p/unnnA31qaDwVFTj5qIXuOzshU0VeQWlze8r9+S2qamLRGjsBXjRkyZpdSKICQC+EUbr57NGjks5XCC1T73J+ZQVc2FR5oSFDHkt4+Uya8QgS4kRKQHDaBcGmejHhXptwzc2MscBZ32b92d99Il7cbOPzwBquJt+KdF/8diqee5nOBvXDbjZ+//Z1clu9itlg9RQZoC5ErcG925lNuKAw63xzjEvXUBr6REwEgX+PiOl1GB4uVkMy+NXaPfLhNjAXyzPARd/lTZCTDZAOvVSCyJTbkeplJOJr07/H5LCJcmBHcCAwEAAaOCA1gwggNUMB8GA1UdIwQYMBaAFA+AYRyCMWHVLyjnjUY4tCzhxtniMB0GA1UdDgQWBBQ+WcDDZfm030N/UYRtNolRB4z5WTAbBgNVHREEFDASghBsb2dpbi5vcmFjbGUuY29tMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwawYDVR0fBGQwYjAvoC2gK4YpaHR0cDovL2NybDMuZGlnaWNlcnQuY29tL3NzY2Etc2hhMi1nNi5jcmwwL6AtoCuGKWh0dHA6Ly9jcmw0LmRpZ2ljZXJ0LmNvbS9zc2NhLXNoYTItZzYuY3JsMEwGA1UdIARFMEMwNwYJYIZIAYb9bAEBMCowKAYIKwYBBQUHAgEWHGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMwCAYGZ4EMAQICMHwGCCsGAQUFBwEBBHAwbjAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29tMEYGCCsGAQUFBzAChjpodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRTSEEyU2VjdXJlU2VydmVyQ0EuY3J0MAkGA1UdEwQCMAAwggGABgorBgEEAdZ5AgQCBIIBcASCAWwBagB3AKS5CZC0GFgUh7sTosxncAo8NZgE+RvfuON3zQ7IDdwQAAABZa9AgJAAAAQDAEgwRgIhAJ5VrSDc7JPOiuwlItvGQCkbjSTGGbRo9dveG5SCUeGOAiEA8og+xfBQ2Jxcn4rrphwPyJyupJdwyii86ccQJ3SRv20AdwCHdb/nWXz4jEOZX73zbv9WjUdWNv9KtWDBtOr/XqCDDwAAAWWvQIFxAAAEAwBIMEYCIQC+bTyBBXCzIl7jhjdsGFXQzbOkW15tbpUG4j7b8f8+ZQIhAMnZplmoWxtpTveCzFF9Jhep3Vq7nx7RTuUIxDd9p3V3AHYA7ku9t3XOYLrhQmkfq+GeZqMPfl+wctiDAMR7iXqo/csAAAFlr0CA1QAABAMARzBFAiAJytMSZLTcekE6O6Sqn0p4V+dB7Yx3at//Ro0Ocs4BhgIhAPbWRHH0kP7JIhTvf98sGHt1yHWtq8nFHOuDDWJqNNCNMA0GCSqGSIb3DQEBCwUAA4IBAQASOLzIZ7KRyo9/hsPpFVBEwOg7xiec/Z5cx1LgClFC43K4Poeo/L5Bh4V4ZzspcUfwZ2WvovrmPh/ipUe2EQ6aVfNxCGvlldhC9geWEy0u0/jEuhOgaJny1D7ZKB+zBARAiG8I1JIpGzGwyQkzQAH3uKaiOH7WrsupIFA88vs2sNB/8/cV5JuaZxEfjW+oBQrYHEIxLlaZp77A4bK2FjSOW3FfI0d7JycmyHCMQF1sTXLonyGd3xSTAf5ztLGSn78KXA3aW8KDyhNU6O/yjNLzyTRQG/EoGm2S2kKg6xt5VDOsz/eZJT3fnA/TdY/bMcLIVicmniguGEecEnK06GukZgoyJpFcT/u7IImFpjLfBb3Dl5pUIkzVhYlpa26W6oMAAAAAAAAEmDCCBJQwggN8oAMCAQICEAH9o+tuynXIiEOLckvPvJEwDQYJKoZIhvcNAQELBQAwYTELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEgMB4GA1UEAxMXRGlnaUNlcnQgR2xvYmFsIFJvb3QgQ0EwHhcNMTMwMzA4MTIwMDAwWhcNMjMwMzA4MTIwMDAwWjBNMQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMScwJQYDVQQDEx5EaWdpQ2VydCBTSEEyIFNlY3VyZSBTZXJ2ZXIgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDcrliQTcHEMBWQNVtuPIIV9SxcvePb/3FD+mQlgNTuGKJN8GbQCnNuEZg2F2SvN539+kGEr8evjP4ac03PM5eQopaHU4MruaZ1SC0dVjd72jEyGtesqwb0ql1Lt0dG3SqTw5AueYCA7xMEahQ7tZuSvsIHZU782vz/eq7cXH5VMQzoOQek174v0wtq0rHfX/5XdFM7NYDdro5EmLOfDtPa4Nf0aymrRKdLWIRtkkuBw9pzixKXSJAERXUa3Tcxl5LozVQNO+TBPzleLrjzXH4QjoZBAI1FZkewoWXOoKopCU7zl+voLqsPcqcwDvrH9P0Ud8OkWyhXwrP5gv23RVibAgMBAAGjggFaMIIBVjASBgNVHRMBAf8ECDAGAQH/AgEAMA4GA1UdDwEB/wQEAwIBhjA0BggrBgEFBQcBAQQoMCYwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTB7BgNVHR8EdDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRHbG9iYWxSb290Q0EuY3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNlcnRHbG9iYWxSb290Q0EuY3JsMD0GA1UdIAQ2MDQwMgYEVR0gADAqMCgGCCsGAQUFBwIBFhxodHRwczovL3d3dy5kaWdpY2VydC5jb20vQ1BTMB0GA1UdDgQWBBQPgGEcgjFh1S8o541GOLQs4cbZ4jAfBgNVHSMEGDAWgBQD3lA1VtFMu2bwo+IbG8OXsj3RVTANBgkqhkiG9w0BAQsFAAOCAQEAIz7fS9IxQqW2fkJcGkTMadFotF1L4AQhbEvibcyx4JePplMJzaoqZeU5Tx6DpW5cmKIkJub7oe2Txy4Cxk1Kv7BC33jas6j5bf8hhVM2YEx2zuw43NZRgPDF1uXUTSdkq5vHPnH7SJe4M23JEwfulqIbGBX2XExA7bPC7P9xweNH/9S5ALQ3Qtogyepuiu4UBq59olmYiKgbby308skUXybPLI1+7TfAqdU5uYK/GQzqNK8AIWj4rXPiyTLaOCULVdOaHfBohu0uQTTvfKVQHb86+dPBCAzm7R6KWCXkuHetLW71Ut20dI+rSS6dO5M0KB94zpTqx73TyW0c3lwy82YKMiaRXE/7uyCJhaYy3wW9w5eaVCJM1YWJaWtuluqDAAAAAAAAA7MwggOvMIICl6ADAgECAhAIO+BWkEJGsaF1aslZkcdKMA0GCSqGSIb3DQEBBQUAMGExCzAJBgNVBAYTAlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xIDAeBgNVBAMTF0RpZ2lDZXJ0IEdsb2JhbCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTMxMTExMDAwMDAwMFowYTELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEgMB4GA1UEAxMXRGlnaUNlcnQgR2xvYmFsIFJvb3QgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDiO+ERct6opNOjV6pQoo8Ld5DJoqXuEs6WWwEJIMwBk6dOMLdT90PEaQBXneKNIt2HBkAAgQnOzhuDv9/NO3FG4tZmxwWzdicWj3ueHpV97rdIowja1q96DDkGZX9KXR+8F/irvu4o13R/eniZWYVoblwjMku/TsDoWm3jcL93EL/8AfaF2ahEEFgyqXUY1dGivkfiJ2r0mjP4SQhgi9RftDqEv6GqSkx9Ps9PX2x2XqBLN5Ge3CLmbc4UGo5qy/7NsxRkF8dbKZ4yv/Lu+tMLQtSrt0Ey2gzU7/iB1buNWD+1G+hJKKJw2jEE3feyFvJMCk4HqO1KPV61f6OQw68nAgMBAAGjYzBhMA4GA1UdDwEB/wQEAwIBhjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBQD3lA1VtFMu2bwo+IbG8OXsj3RVTAfBgNVHSMEGDAWgBQD3lA1VtFMu2bwo+IbG8OXsj3RVTANBgkqhkiG9w0BAQUFAAOCAQEAy5w3qkgTEgr63UScT1Kw9N+uBPV5eQijJBj8SyuEwC251cf+9MEfWMu4bZx6dOeYKasRteNwoKHNTIiZk4yRcOKrDxy+k6n/Y9XkB2DTo7+dWwnx1Y7jU/SOY/o/p9u0Zt9iZtbRbkGN8i216ndKn51Y4itZwEAj7S0ogkU+eVSSJpjggEioN+/w1nlgFt6s6A7NbqxEFzgvSdrhRT4quTZTzzpQBvcu6MRXSWxhIRjVBK14PCw6gGun668VFOnYicG5OGzikWyK/2S5dyVXMMAbJKPh3OnfR3y1tCQIBTDsLb0Lv0W/ULmp8+uYARKtyIjGmDRfjQo8xunVlZVt3gA= request-method GET response-head HTTP/1.1 200 OK
+Date: Thu, 05 Sep 2019 14:19:19 GMT
+Server: Oracle-HTTP-Server
+Accept-Ranges: bytes
+Content-Length: 8088
+Last-Modified: Tue, 31 Jan 2017 10:31:54 GMT
+X-ORACLE-DMS-ECID: 005^Svxih3W9xWw70Fq2UF00030A0000Kd
+X-Powered-By: Servlet/2.5 JSP/2.1
+Content-Type: text/javascript
+Content-Language: en
+ original-response-headers Date: Thu, 05 Sep 2019 14:19:19 GMT
+Server: Oracle-HTTP-Server
+Accept-Ranges: bytes
+Content-Length: 8088
+Last-Modified: Tue, 31 Jan 2017 10:31:54 GMT
+X-ORACLE-DMS-ECID: 005^Svxih3W9xWw70Fq2UF00030A0000Kd
+X-Powered-By: Servlet/2.5 JSP/2.1
+Keep-Alive: timeout=5, max=100
+Connection: Keep-Alive
+Content-Type: text/javascript
+Content-Language: en
+ ctid 2 eTLD1Access 1;0;947711238, uncompressed-len 0 net-response-time-onstart 918 net-response-time-onstop 1117 alt-data 1;8088,javascript/moz-bytecode-20190828152820 alt-data-from-child 1   n

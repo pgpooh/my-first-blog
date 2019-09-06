@@ -1,0 +1,74 @@
+{
+  "Version": "18.04",
+  "OEM": {
+    "Vendor": "innotek GmbH",
+    "Product": "VirtualBox",
+    "Family": "Virtual Machine"
+  },
+  "BIOS": {
+    "Vendor": "innotek GmbH",
+    "Version": "VirtualBox"
+  },
+  "CPU": {
+    "OpMode": "32-bit, 64-bit",
+    "CPUs": "1",
+    "Threads": "1",
+    "Cores": "1",
+    "Sockets": "1",
+    "Vendor": "GenuineIntel",
+    "Family": "6",
+    "Model": "158",
+    "Stepping": "9",
+    "Name": "Intel(R) Core(TM) i7-7700HQ CPU @ 2.80GHz",
+    "Hypervisor": "KVM",
+    "VirtualizationType": "full"
+  },
+  "Arch": "amd64",
+  "GPU": [
+    {
+      "Vendor": "80ee",
+      "Model": "beef"
+    }
+  ],
+  "RAM": 2,
+  "Disks": [
+    10.7
+  ],
+  "Partitions": [
+    8.1
+  ],
+  "Screens": [
+    {
+      "Size": "0mmx0mm",
+      "Resolution": "1920x950",
+      "Frequency": "59.97"
+    }
+  ],
+  "Autologin": false,
+  "LivePatch": false,
+  "Session": {
+    "DE": "ubuntu:GNOME",
+    "Name": "ubuntu",
+    "Type": "x11"
+  },
+  "Language": "en_US",
+  "Timezone": "Asia/Seoul",
+  "Upgrade": {
+    "From": "16.04",
+    "Stages": {
+      "0": "start",
+      "2498": "CLEANUP",
+      "66": "MODIFY_SOURCES",
+      "547": "INSTALL",
+      "17477": "REBOOT",
+      "535": "INSTALL",
+      "8": "PREPARE",
+      "631": "INSTALL",
+      "155": "FETCH",
+      "2178": "POSTUPGRADE"
+    },
+    "ThirdPartySources": false,
+    "Type": "GTK",
+    "InstallMedia": "Ubuntu 16.04.3 LTS \"Xenial Xerus\" - Release amd64 (20170801)"
+  }
+}

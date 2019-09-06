@@ -1,0 +1,57 @@
+Checking for a new Ubuntu release
+/usr/lib/python3/dist-packages/DistUpgrade/DistUpgradeFetcher.py:23: PyGIWarning: Gtk was imported without specifying a version first. Use gi.require_version('Gtk', '3.0') before import to ensure that the right version gets loaded.
+  from gi.repository import Gtk, Gdk
+/usr/lib/python3/dist-packages/DistUpgrade/ReleaseNotesViewerWebkit.py:33: PyGIWarning: WebKit2 was imported without specifying a version first. Use gi.require_version('WebKit2', '4.0') before import to ensure that the right version gets loaded.
+  from gi.repository import WebKit2 as WebKit
+Gtk-Message: GtkDialog mapped without a transient parent. This is discouraged.
+authenticate 'bionic.tar.gz' against 'bionic.tar.gz.gpg' 
+extracting 'bionic.tar.gz'
+
+(appstreamcli:3044): GLib-CRITICAL **: g_strchug: assertion 'string != NULL' failed
+
+(appstreamcli:3044): GLib-CRITICAL **: g_strchomp: assertion 'string != NULL' failed
+
+(appstreamcli:3044): GLib-CRITICAL **: g_strchug: assertion 'string != NULL' failed
+
+(appstreamcli:3044): GLib-CRITICAL **: g_strchomp: assertion 'string != NULL' failed
+
+(appstreamcli:3044): GLib-CRITICAL **: g_strchug: assertion 'string != NULL' failed
+
+(appstreamcli:3044): GLib-CRITICAL **: g_strchomp: assertion 'string != NULL' failed
+AppStream cache update completed, but some metadata was ignored due to errors.
+Inhibiting until Ctrl+C is pressed...
+Inhibiting until Ctrl+C is pressed...
+  MarkInstall libc6 [ amd64 ] < 2.23-0ubuntu11 -> 2.27-3ubuntu1 > ( libs ) FU=1
+    MarkInstall locales [ amd64 ] < 2.23-0ubuntu11 -> 2.27-3ubuntu1 > ( libs ) FU=0
+    Installing libc-bin as Depends of locales
+      MarkInstall libc-bin [ amd64 ] < 2.23-0ubuntu11 -> 2.27-3ubuntu1 > ( libs ) FU=0
+Starting pkgProblemResolver with broken count: 0
+Starting 2 pkgProblemResolver with broken count: 0
+Done
+Inhibiting until Ctrl+C is pressed...
+Inhibiting until Ctrl+C is pressed...
+No snaps are installed yet. Try 'snap install hello-world'.
+Warning: /snap/bin was not found in your $PATH. If you've not restarted your
+         session since you installed snapd, try doing that. Please see
+         https://forum.snapcraft.io/t/9469 for more details.
+
+Warning: /snap/bin was not found in your $PATH. If you've not restarted your
+         session since you installed snapd, try doing that. Please see
+         https://forum.snapcraft.io/t/9469 for more details.
+
+Warning: /snap/bin was not found in your $PATH. If you've not restarted your
+         session since you installed snapd, try doing that. Please see
+         https://forum.snapcraft.io/t/9469 for more details.
+
+Warning: /snap/bin was not found in your $PATH. If you've not restarted your
+         session since you installed snapd, try doing that. Please see
+         https://forum.snapcraft.io/t/9469 for more details.
+
+Warning: /snap/bin was not found in your $PATH. If you've not restarted your
+         session since you installed snapd, try doing that. Please see
+         https://forum.snapcraft.io/t/9469 for more details.
+
+Warning: /snap/bin was not found in your $PATH. If you've not restarted your
+         session since you installed snapd, try doing that. Please see
+         https://forum.snapcraft.io/t/9469 for more details.
+

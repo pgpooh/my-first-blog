@@ -1,0 +1,12 @@
+
+(indicator-power-service:1992): GStreamer-WARNING **: Failed to load plugin '/usr/lib/x86_64-linux-gnu/gstreamer-1.0/libgstplayback.so': /usr/lib/x86_64-linux-gnu/libgstbase-1.0.so.0: undefined symbol: gst_element_foreach_sink_pad
+
+(indicator-power-service:1992): GStreamer-CRITICAL **: gst_element_get_bus: assertion 'GST_IS_ELEMENT (element)' failed
+
+(indicator-power-service:1992): GStreamer-CRITICAL **: gst_bus_add_watch_full: assertion 'GST_IS_BUS (bus)' failed
+
+(indicator-power-service:1992): GStreamer-CRITICAL **: gst_object_unref: assertion 'object != NULL' failed
+
+(indicator-power-service:1992): GLib-GObject-CRITICAL **: g_object_set: assertion 'G_IS_OBJECT (object)' failed
+
+(indicator-power-service:1992): GStreamer-CRITICAL **: gst_element_set_state: assertion 'GST_IS_ELEMENT (element)' failed

@@ -1,0 +1,4 @@
+WARN  2019-09-05 23:12:12 unity <unknown>:0 The application 'compiz' lost its connection to the display :0;
+most likely the X server was shut down or you killed/destroyed
+the application.
+
